@@ -25,7 +25,7 @@ func Init() {
 		viper.GetInt("log_max_backup"),
 		viper.GetInt("log_max_age"),
 		viper.GetBool("log_compress"),
-		"local",
+		"gin_demo",
 	)
 }
 
@@ -92,4 +92,27 @@ func newCore(
 		zapcore.NewMultiWriteSyncer(zapcore.AddSync(os.Stdout), zapcore.AddSync(&hook)),
 		atomicLevel,
 	)
+}
+
+func writeOnChannel(channel interface{}) *zap.Logger {
+	switch channel {
+	default:
+		return Log.Default
+	}
+}
+
+func Info(channel interface{}, msg string, fields ...zapcore.Field) {
+	writeOnChannel(channel).Info(msg, fields...)
+}
+
+func Error(channel interface{}, msg string, fields ...zapcore.Field) {
+	writeOnChannel(channel).Error(msg, fields...)
+}
+
+func Panic(channel interface{}, msg string, fields ...zapcore.Field) {
+	writeOnChannel(channel).Panic(msg, fields...)
+}
+
+func Debug(channel interface{}, msg string, fields ...zapcore.Field) {
+	writeOnChannel(channel).Debug(msg, fields...)
 }
